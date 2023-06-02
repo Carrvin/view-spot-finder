@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  view-spot-finder
+
+Globals:
+  Function:
+    Timeout: 10
+
+Resources:
+  ViewSpotFinderFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: aws/
+      Handler: lambda.lambdaHandler
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      Events:
+        ViewSpotFinder:
+          Type: Api
+          Properties:
+            Path: /viewSpotFinder
+            Method: get
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: 'es2020'
+        Sourcemap: true
+        EntryPoints:
+          - lambda.ts
+
+Outputs:
+  ViewSpotFinderApi:
+    Description: 'API Gateway endpoint URL for Prod stage for ViewSpotFinder function'
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/viewSpotFinder/'
+  ViewSpotFinderFunction:
+    Description: 'ViewSpotFinder Lambda Function ARN'
+    Value: !GetAtt ViewSpotFinderFunction.Arn
+  ViewSpotFinderFunctionIamRole:
+    Description: 'Implicit IAM Role created for ViewSpotFinder function'
+    Value: !GetAtt ViewSpotFinderFunctionRole.Arn
